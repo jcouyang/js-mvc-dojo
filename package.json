@@ -1,0 +1,37 @@
+{
+  "name": "blogist",
+  "version": "1.0.0",
+  "description": "blog with gist",
+  "main": "index.html",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcouyang/js-mvc-dojo.git"
+  },
+  "keywords": [
+    "blog",
+    "gist"
+  ],
+  "author": "Jichao Ouyang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcouyang/js-mvc-dojo/issues"
+  },
+  "homepage": "https://github.com/jcouyang/js-mvc-dojo",
+  "devDependencies": {
+		"grunt": "~0.4.2",
+		"nunjucks": "~1.0.1",
+    "grunt-nunjucks": "~0.1.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt": "~0.4.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "mocha": "~1.17.1",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-uglify": "~0.3.2"
+  }
+}

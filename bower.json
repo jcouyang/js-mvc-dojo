@@ -1,0 +1,28 @@
+{
+  "name": "blogist",
+  "version": "1.0.0",
+  "homepage": "http://blogist.github.com",
+  "authors": [
+    "Jichao Ouyang <oyanglulu@gmail.com>"
+  ],
+  "description": "blog with gist",
+  "main": "index.html",
+  "keywords": [
+    "blog",
+    "gist"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootswatch": "~3.1.1"
+  },
+  "devDependencies": {
+    "nunjucks": "~1.0.1"
+  }
+}
