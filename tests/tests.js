@@ -10,7 +10,6 @@ function once(fn) {
         return returnValue;
     };
 }
-$('<div id="for-testing" style="display:none;"></div>').appendTo('body');
 
 describe('unit test', function(){
 	before(function(){
