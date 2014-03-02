@@ -9,10 +9,22 @@
   <body>
     <div id="mocha"></div>
     <script src="mocha.js"></script>
+		<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="../bower_components/nunjucks/browser/nunjucks-slim.js"></script>
+		<script src="../javascripts/templates.js"></script>
+		<script src="../bower_components/q/q.js"></script>
+		<script src="../src/blogist.js"></script>
+		<script src="../bower_components/chai/chai.js"></script>
+		<script src="sinon-1.7.3.js"></script>
+		<script src="chai-as-promised.js"></script>		
+		<script src="chai-as-promised-fix.js"></script>
+		
     <script>mocha.setup('bdd')</script>
     <script src="tests.js"></script>
     <script>
-      mocha.run();
+	 if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+    mocha.run();
+  }
     </script>
   </body>
 </html>

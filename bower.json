@@ -23,6 +23,8 @@
     "bootswatch": "~3.1.1"
   },
   "devDependencies": {
-    "nunjucks": "~1.0.1"
+    "nunjucks": "~1.0.1",
+    "chai": "~1.9.0",
+    "sinon": "~1.8.2"
   }
 }
