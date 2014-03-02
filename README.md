@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jcouyang/js-mvc-dojo.png)](https://travis-ci.org/jcouyang/js-mvc-dojo)
+
 ## Setup
 ### install
 ```sh
