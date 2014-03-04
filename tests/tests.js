@@ -1,15 +1,5 @@
 var should = chai.should();
 var stub = sinon.stub;
-function once(fn) {
-    var returnValue, called = false;
-    return function () {
-        if (!called) {
-            called = true;
-            returnValue = fn.apply(this, arguments);
-        }
-        return returnValue;
-    };
-}
 
 describe('unit test', function(){
 	before(function(){
@@ -35,5 +25,6 @@ describe('unit test', function(){
 	});
 });
 	
+
 
 

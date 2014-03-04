@@ -4,11 +4,13 @@ function getUser(){
 		method:'get'
 	}));
 }
+
 function renderHeader(){
 	getUser().then(function(user){
 		$(".navbar.navbar-default").html(nunjucks.render("src/templates/header.html",user));
 	});	
 }
 
-// renderHeader();
+renderHeader();
 
+console.log('adsf');
