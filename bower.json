@@ -25,6 +25,7 @@
   "devDependencies": {
     "nunjucks": "~1.0.1",
     "chai": "~1.9.0",
-    "sinon": "~1.8.2"
+    "sinon": "~1.8.2",
+    "q": "~1.0.0"
   }
 }
