@@ -2,10 +2,10 @@ var should = chai.should();
 var stub = sinon.stub;
 
 describe('unit test', function(){
-	before(function(){
+	beforeEach(function(){
    sinon.stub(nunjucks,"render").callsArgAsync(2);
   });
-	after(function(){
+	afterEach(function(){
 		nunjucks.render.restore();
 	});
 	describe('header',function(){
@@ -23,6 +23,23 @@ describe('unit test', function(){
 			}).should.notify(done);
 		});
 	});
+
+	describe('article',function(){
+		it('show all gist', function(done){
+			var gists = [{
+				html_url:"https://gist.github.com/2171fd506edc072ca80e"
+			}];
+			var gistsData = Q(gists);
+			getGist = stub().returns(gistsData);
+			renderGist();
+			gistsData.should.be.fulfilled.then(function(){
+				nunjucks.render.calledOnce.should.be.true;
+				nunjucks.render.getCall(0).args[0].should.be.equal("src/templates/article.html");
+				nunjucks.render.getCall(0).args[1].should.be.equal(gists);
+			}).should.notify(done);
+		});
+	});
+	
 });
 	
 
