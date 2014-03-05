@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/jcouyang/js-mvc-dojo.png)](https://travis-ci.org/jcouyang/js-mvc-dojo)
 
-## Setup
+## [Setup]()
+
 ### install
 ```sh
 npm install
@@ -24,3 +25,4 @@ python -m SimpleHTTPServer
 ## Test
 `grunt mocha` or open `tests/index.html` in browser
 
+## [Now Begin DOJO](wiki)
