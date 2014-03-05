@@ -25,4 +25,4 @@ python -m SimpleHTTPServer
 ## Test
 `grunt mocha` or open `tests/index.html` in browser
 
-## [Now Begin DOJO](wiki)
+## [Now Begin DOJO](https://github.com/jcouyang/js-mvc-dojo/wiki)
