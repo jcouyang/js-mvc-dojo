@@ -1,0 +1,11 @@
+<ul class="list-group">
+	{% for gist in gists %}
+	{% for name,file in gist.files%}
+	<li class="list-group-item">
+		<a href="#" data-id="{{gist.id}}" data-url="{{gist.html_url}}">
+			{{name}}
+		</a>
+  </li>
+	{% endfor%}
+	{% endfor%}
+</ul>
