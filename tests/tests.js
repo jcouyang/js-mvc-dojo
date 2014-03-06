@@ -3,7 +3,7 @@ var stub = sinon.stub;
 
 describe('unit test', function(){
 	beforeEach(function(){
-   sinon.stub(nunjucks,"render").callsArgAsync(2);
+   sinon.stub(nunjucks,"render");
   });
 	afterEach(function(){
 		nunjucks.render.restore();
@@ -30,12 +30,12 @@ describe('unit test', function(){
 				html_url:"https://gist.github.com/2171fd506edc072ca80e"
 			}];
 			var gistsData = Q(gists);
-			getGist = stub().returns(gistsData);
+			getGists = stub().returns(gistsData);
 			renderGist();
 			gistsData.should.be.fulfilled.then(function(){
 				nunjucks.render.calledOnce.should.be.true;
-				nunjucks.render.getCall(0).args[0].should.be.equal("src/templates/article.html");
-				nunjucks.render.getCall(0).args[1].should.be.equal(gists);
+				nunjucks.render.getCall(0).args[0].should.be.equal("src/templates/gistlist.html");
+				nunjucks.render.getCall(0).args[1].should.be.deep.equal({gists:gists});
 			}).should.notify(done);
 		});
 	});
