@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "grunt deploy"
   },
   "repository": {
     "type": "git",

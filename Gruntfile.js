@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 			},
 			 options: {
       run: true,
-    },
+			 },
 		},
 		uglify:{
 			blogist:{
