@@ -1,5 +1,5 @@
 <ul class="list-group">
-	{% for gist in gists %}
+	{% for gist in data %}
 	{% for name,file in gist.files%}
 	<li class="list-group-item">
 		<a href="#" data-id="{{gist.id}}" data-url="{{gist.html_url}}">
