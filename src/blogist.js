@@ -143,6 +143,7 @@ var router = new Router();
 router.get("/", function(){
 	console.log("homepage");
 	header.render();
+	bloglist.render();
 });
 
 router.get("/:gistid",function(params){
