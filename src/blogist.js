@@ -9,23 +9,27 @@ _.extend(View.prototype, {
 	el:$("body"),
 	templateEngine: nunjucks,
 	template:"",
+	dataurl:"",
 	data:"",
 	events:"click body:",
-	initialize:function(){
+	initialize:function(options){
 	},
-	getData:function(options){
-		if (!this.data) return Q();
-		var methodAndUrl = this.data.split('@');
+	fetch:function(){
+		var self = this;
+		if (!this.dataurl) return Q();
+		var methodAndUrl = this.dataurl.split('@');
 		return Q($.ajax(_.extend({
 			url:methodAndUrl[1],
 			method:methodAndUrl[0]
-		},options)));
+		},self.dataOptions))).then(function(data){
+			self.data = data;
+			self.render(data);
+			return data;
+		});
 	},
-	render:function(){
-		var self = this;
-		return this.getData(this.dataOptions).then(function(data){
-			self.el.html(self.templateEngine.render(self.template, {data:data}));
-		}).then(self.bindEvent.bind(self));
+	render:function(data){
+		this.el.html(this.templateEngine.render(this.template, {data:this.data}));
+		this.bindEvent();
 	},
 	bindEvent:function(){
 		var self = this;
@@ -39,7 +43,6 @@ _.extend(View.prototype, {
 			} else{
 				self.el.find(selector).on(eventName, _.bind(self[events[key]],self));
 			}
-				
 		});
 	}
 });
@@ -62,20 +65,27 @@ View.extend = function(props){
 
 var HeaderView = View.extend({
 	el: $(".navbar.navbar-default"),
-	render:function(){
+	fetch:function(options){
 		var self = this;
-		return this.getData().then(function(data){
+		if (!this.dataurl) return Q();
+		var methodAndUrl = this.dataurl.split('@');
+		return Q($.ajax(_.extend({
+			url:methodAndUrl[1],
+			method:methodAndUrl[0]
+		},options))).then(function(data){
+			self.data = data;
+			self.render();
 			localStorage.setItem("login_user",data.login);
-			self.el.html(self.templateEngine.render(self.template, data));
-		}).then(self.bindEvent.bind(self));
+			return data;
+		});
 	},
 	template:"src/templates/header.html",
-	data:"get@https://api.github.com/user"+ "?access_token=" + localStorage.getItem("access_token")
+	dataurl:"get@https://api.github.com/user"+ "?access_token=" + localStorage.getItem("access_token")
 });
 
 var BlogDetailView = View.extend({
 	initialize:function(){
-		this.data = "get@" + arguments[0];
+		this.dataurl = "get@" + arguments[0];
 		this.dataOptions = {dataType:'jsonp'};
 	},
 	el:$(".container .article"),
@@ -84,17 +94,57 @@ var BlogDetailView = View.extend({
 
 var BloglistView = View.extend({
 	el: $(".container .article"),
-	events:{
-		'click li a':"renderDetail"
-	},
-	renderDetail:function(e){
-		new BlogDetailView($(e.currentTarget).data("url") +".json").render();
-	},
 	template:"src/templates/gistlist.html",
-	data:"get@https://api.github.com/users/"+localStorage.getItem('login_user') +"/gists?access_token=" + localStorage.getItem("access_token")
+	dataurl:"get@https://api.github.com/users/"+localStorage.getItem('login_user') +"/gists?access_token=" + localStorage.getItem("access_token")
 });
 
 var header = new HeaderView();
 var bloglist = new BloglistView();
+header.fetch().then(bloglist.fetch());
 
-header.render().then(bloglist.render.bind(bloglist));
+Router = function(){
+	this.routes = [];
+	this.params = {};
+	var self = this;
+	$(window).on("hashchange",function(){
+		var values;
+		var hash = window.location.hash.replace("#","");
+		
+		_.each(self.routes,function(route){
+			var regex = new RegExp(route.regex,"g");
+			if((values = regex.exec(hash))!==null){
+				values.shift();
+				route.callback(_.object(route.paramNames,values));
+				return;
+			}
+		});
+
+	});
+};
+
+Router.prototype.get = function(url,callback){
+	var paramRegx = /:([^/.\\\\]+)/g;
+	var param;
+	var route = {
+		paramNames:[],
+		regex:'^'+ url +'$',
+		params:{},
+		callback:callback
+	};
+	while((param = paramRegx.exec(url))!==null){
+		route.paramNames.push(param[1]);
+		route.regex = route.regex.replace(param[0],"([^/.\\\\]+)").replace(":","");
+	}
+	this.routes.push(route);
+};
+
+
+var router = new Router();
+router.get("/", function(){
+	console.log("homepage");
+	header.render();
+});
+
+router.get("/:gistid",function(params){
+	new BlogDetailView('https://gist.github.com/'+localStorage.getItem('login_user')+"/"+ params.gistid +".json").fetch();
+});

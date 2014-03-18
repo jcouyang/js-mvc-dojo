@@ -5,7 +5,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a href="#" class="navbar-brand">Blogist</a>
+		<a href="#/" class="navbar-brand">Blogist</a>
 	</div>
 	<div class="navbar-collapse collapse navbar-responsive-collapse">
 		<ul class="nav navbar-nav">
@@ -16,10 +16,10 @@
 		</form>
 		
 		<ul class="nav navbar-nav navbar-right">
-			{% if login %}
+			{% if data.login %}
 			<li>
 				<a class="name" href="#">
-					<img width="20" height="20" src="{{avatar_url}}" alt="{{name}}"> {{name}}
+					<img width="20" height="20" src="{{avatar_url}}" alt="{{name}}"> {{data.name}}
 				</a>
 			</li>
 			{% else %}
