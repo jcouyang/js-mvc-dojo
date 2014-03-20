@@ -65,19 +65,47 @@ Router = function(){
 	this.routes = [];
 	this.params = {};
 	var self = this;
-	$(window).on("hashchange",function(){
+	var poped = false;
+	var hashchanged = false;
+	var loaded = false;
+	var findRoute = function(e){
 		var values;
-		var hash = window.location.hash.replace("#","");
-		
+		var hash = window.location.hash.replace("#","") || "/";
 		_.each(self.routes,function(route){
 			var regex = new RegExp(route.regex,"g");
 			if((values = regex.exec(hash))!==null){
+				console.log(values);
 				values.shift();
 				route.callback(_.object(route.paramNames,values));
 				return;
 			}
 		});
+	};
+	
+	$(window).on("hashchange",function(e){
 
+		if(!poped){
+			console.log("hashchange",document.location,e.originalEvent.state);
+			findRoute(e);
+			hashchanged = true;
+			poped=false;
+		}
+		loaded =false;
+	});
+
+	$(window).on("popstate", function(e){
+		if(!loaded){
+			console.log("popstate",document.location,e.originalEvent.state);
+			findRoute(e);
+			poped =true;
+			loaded=false;
+		}
+	});
+
+	$(window).on("load", function(e){
+		console.log("load",document.location,e.originalEvent.state);
+		findRoute(e);
+		loaded=true;
 	});
 };
 

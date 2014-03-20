@@ -36,16 +36,14 @@ var BloglistView = View.extend({
 
 var header = new HeaderView();
 var bloglist = new BloglistView();
-header.fetch().then(bloglist.fetch());
-
+header.fetch();
 
 var router = new Router();
 router.get("/", function(){
 	console.log("homepage");
-	header.render();
-	bloglist.render();
+	header.fetch().then(bloglist.fetch.bind(bloglist));
 });
 
-router.get("/:gistid",function(params){
+router.get("/:gistid",function(params,data){
 	new BlogDetailView('https://gist.github.com/'+localStorage.getItem('login_user')+"/"+ params.gistid +".json").fetch();
 });
