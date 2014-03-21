@@ -1,49 +1,46 @@
+function getToken(){
+	var token = localStorage.getItem("access_token");
+	if(token)
+		return "?access_token=" + token;
+	return "";
+}
+
+var userModel = new Model("user","get@https://api.github.com/user"+ getToken());
+
+var bloglistModel = new Model("bloglist","get@https://api.github.com/users/"+ userModel.get("login") +"/gists");
+
+var blogdetailModel = Model.extend({
+	dataOptions:{dataType:"jsonp"}
+});
 var HeaderView = View.extend({
+	model:userModel,
 	el: $(".navbar.navbar-default"),
-	fetch:function(options){
-		var self = this;
-		if (!this.dataurl) return Q();
-		var methodAndUrl = this.dataurl.split('@');
-		return Q($.ajax(_.extend({
-			url:methodAndUrl[1],
-			method:methodAndUrl[0]
-		},options))).then(function(data){
-			self.data = data;
-			self.render();
-			localStorage.setItem("login_user",data.login);
-			return data;
-		});
-	},
-	template:"src/templates/header.html",
-	dataurl:"get@https://api.github.com/user"+ "?access_token=" + localStorage.getItem("access_token")
+	template:"src/templates/header.html"
 });
 
+
 var BlogDetailView = View.extend({
-	initialize:function(){
-		this.dataurl = "get@" + arguments[0];
-		this.dataOptions = {dataType:'jsonp'};
-	},
 	el:$(".container .article"),
 	template:"src/templates/article.html"
 });
 
 var BloglistView = View.extend({
+	model:bloglistModel,
+
 	el: $(".container .article"),
-	template:"src/templates/gistlist.html",
-	dataurl:"get@https://api.github.com/users/"+localStorage.getItem('login_user') +"/gists?access_token=" + localStorage.getItem("access_token")
+	template:"src/templates/gistlist.html"
 });
 
-
 var header = new HeaderView();
+header.render();
 var bloglist = new BloglistView();
-header.fetch();
 
 var router = new Router();
 router.get("/", function(){
 	console.log("homepage");
-	header.fetch().then(bloglist.fetch.bind(bloglist));
+	bloglist.render();
 });
 
 router.get("/:gistid",function(params,data){
-	new BlogDetailView('https://gist.github.com/'+localStorage.getItem('login_user')+"/"+ params.gistid +".json").fetch();
+	new BlogDetailView({model:new blogdetailModel("blogdetail",'get@https://gist.github.com/'+ userModel.get("login") +"/"+ params.gistid +".json")}).render();
 });

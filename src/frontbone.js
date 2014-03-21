@@ -1,33 +1,96 @@
+var extend = function(props){
+	var parent = this,child;
+    child = function(){
+        parent.apply(this, arguments);
+    };
+	child.parent=parent;
+    var FixConstructor = function(){
+        this.constructor = child;
+    };
+    FixConstructor.prototype = parent.prototype;
+    child.prototype = new FixConstructor();
+    _.extend(child, parent);
+    _.extend(child.prototype,props);
+    return child;
+};
+
+Model = function(name,url){
+	this.name = name;
+	this.data = Q.defer();
+	this.updated = Q.defer();
+	this.localData={};
+	this.url=url;
+	this.initialize.apply(this, arguments);
+};
+
+Model.extend = extend;
+_.extend(Model.prototype,{
+	initialize:function() {
+	},
+	storage:localStorage,
+	get:function(item){
+		var localData = this.storage.getItem(this.name);
+		return localData && JSON.parse(localData)[item];
+	},
+	fetch:function(){
+		this.localData = JSON.parse(this.storage.getItem(this.name));
+		if (this.localData)
+			this.data.resolve(this.localData);
+		this.refetch();
+	},
+	refetch:function(){
+		var self = this;
+		if (!this.url) return Q();
+		var methodAndUrl = this.url.split('@');
+		return Q($.ajax(_.extend({
+			url:methodAndUrl[1],
+			method:methodAndUrl[0]
+		},self.dataOptions)))
+			.then(function(data){
+				self.data.resolve(data);
+				if (!_.isEqual(data,self.localData)){
+					self.updated.resolve(data);
+					self.save(data);
+					self.localData = data;
+				}
+			});
+	},
+	save:function(data){
+		this.storage.setItem(this.name,JSON.stringify(data));
+	}
+});
+
 View = function(){
 	this.initialize.apply(this, arguments);
 };
+
+View.extend = extend;
 
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 _.extend(View.prototype, {
 	el:$("body"),
 	templateEngine: nunjucks,
 	template:"",
-	dataurl:"",
-	data:"",
+	model: Model,
 	events:"click body:",
 	initialize:function(options){
+		if(arguments[0])
+			_.extend(this,arguments[0]);
+		this.model.fetch();
 	},
-	fetch:function(){
+	render:function(){
 		var self = this;
-		if (!this.dataurl) return Q();
-		var methodAndUrl = this.dataurl.split('@');
-		return Q($.ajax(_.extend({
-			url:methodAndUrl[1],
-			method:methodAndUrl[0]
-		},self.dataOptions))).then(function(data){
-			self.data = data;
-			self.render(data);
-			return data;
+		this.model.data.promise.then(function(data){
+			self.el.html(self.templateEngine.render(self.template, {data:data}));
+			self.bindEvent();
+		});
+		this.model.updated.promise.then(function(data){
+			self.el.html(self.templateEngine.render(self.template, {data:data}));
+			self.bindEvent();
 		});
 	},
-	render:function(data){
-		this.el.html(this.templateEngine.render(this.template, {data:this.data}));
-		this.bindEvent();
+	refetch:function(){
+		this.model.fetch();
 	},
 	bindEvent:function(){
 		var self = this;
@@ -45,21 +108,6 @@ _.extend(View.prototype, {
 	}
 });
 
-View.extend = function(props){
-	var parent = this,child;
-    child = function(){
-        parent.apply(this, arguments);
-    };
-	child.parent=parent;
-    var FixConstructor = function(){
-        this.constructor = child;
-    };
-    FixConstructor.prototype = parent.prototype;
-    child.prototype = new FixConstructor();
-    _.extend(child, parent);
-    _.extend(child.prototype,props);
-    return child;
-};
 
 Router = function(){
 	this.routes = [];
