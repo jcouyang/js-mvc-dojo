@@ -1,11 +1,15 @@
 <ul class="list-group">
 	{% for gist in data %}
-	{% for name,file in gist.files%}
 	<li class="list-group-item">
-		<a href="#/{{gist.id}}">
-			{{name}}
+		<a href="#/{{gist.user.login}}/{{gist.id}}">
+			{% if gist.description  %}
+			{{gist.description}}
+			{% else %}
+			{% for name, file in gist.files %}
+			{{name}} 
+			{% endfor%}
+			{% endif %}
 		</a>
   </li>
-	{% endfor%}
 	{% endfor%}
 </ul>

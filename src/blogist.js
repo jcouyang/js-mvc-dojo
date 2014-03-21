@@ -7,7 +7,7 @@ function getToken(){
 
 var userModel = new Model("user","get@https://api.github.com/user"+ getToken());
 
-var bloglistModel = new Model("bloglist","get@https://api.github.com/users/"+ userModel.get("login") +"/gists");
+var bloglistModel = new Model("bloglist","get@https://api.github.com/users/jcouyang/gists");
 
 var blogdetailModel = Model.extend({
 	dataOptions:{dataType:"jsonp"}
@@ -26,7 +26,6 @@ var BlogDetailView = View.extend({
 
 var BloglistView = View.extend({
 	model:bloglistModel,
-
 	el: $(".container .article"),
 	template:"src/templates/gistlist.html"
 });
@@ -38,9 +37,10 @@ var bloglist = new BloglistView();
 var router = new Router();
 router.get("/", function(){
 	console.log("homepage");
+	header.render();
 	bloglist.render();
 });
 
-router.get("/:gistid",function(params,data){
-	new BlogDetailView({model:new blogdetailModel("blogdetail",'get@https://gist.github.com/'+ userModel.get("login") +"/"+ params.gistid +".json")}).render();
+router.get("/jcouyang/:gistid",function(params,data){
+	new BlogDetailView({model:new blogdetailModel("blogdetail",'get@https://gist.github.com/jcouyang/'+ params.gistid +".json")}).render();
 });

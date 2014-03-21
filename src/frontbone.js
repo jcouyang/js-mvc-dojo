@@ -1,3 +1,7 @@
+if(window.location.pathname!="/"){
+	window.location = window.location.origin + "#" +window.location.pathname.replace(".html","");
+}
+
 var extend = function(props){
 	var parent = this,child;
     child = function(){
@@ -53,6 +57,9 @@ _.extend(Model.prototype,{
 					self.save(data);
 					self.localData = data;
 				}
+			},function(){
+				self.data.reject();
+				self.updated.reject()
 			});
 	},
 	save:function(data){
@@ -83,10 +90,14 @@ _.extend(View.prototype, {
 		this.model.data.promise.then(function(data){
 			self.el.html(self.templateEngine.render(self.template, {data:data}));
 			self.bindEvent();
+		},function(){
+			self.el.html(self.templateEngine.render(self.template));
 		});
 		this.model.updated.promise.then(function(data){
 			self.el.html(self.templateEngine.render(self.template, {data:data}));
 			self.bindEvent();
+		},function(){
+			self.el.html(self.templateEngine.render(self.template));
 		});
 	},
 	refetch:function(){
